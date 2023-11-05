@@ -1,5 +1,5 @@
 use crate::header::VTFHeader;
-use crate::utils::get_offset;
+use crate::utils::{bgr_to_rgb, bgra_to_rgba, get_offset};
 use crate::Error;
 use image::codecs::dxt::{DxtDecoder, DxtVariant};
 use image::{DynamicImage, ImageBuffer, ImageDecoder, Pixel};
@@ -92,6 +92,14 @@ impl<'a> VTFImage<'a> {
                 self.image_from_buffer(bytes.to_vec(), DynamicImage::ImageRgba8)
             }
             ImageFormat::Rgb888 => self.image_from_buffer(bytes.to_vec(), DynamicImage::ImageRgb8),
+            ImageFormat::Bgra8888 => {
+                let bytes = bgra_to_rgba(bytes);
+                self.image_from_buffer(bytes, DynamicImage::ImageRgba8)
+            }
+            ImageFormat::Bgr888 => {
+                let bytes = bgr_to_rgb(bytes);
+                self.image_from_buffer(bytes, DynamicImage::ImageRgb8)
+            }
             _ => Err(Error::UnsupportedImageFormat(self.format)),
         }
     }
