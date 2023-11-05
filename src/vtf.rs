@@ -3,7 +3,7 @@ use crate::image::{ImageFormat, VTFImage};
 use crate::resources::{ResourceList, ResourceType};
 use crate::Error;
 use image::codecs::dxt::{DxtEncoder, DxtVariant};
-use image::{DynamicImage};
+use image::DynamicImage;
 use std::io::Cursor;
 use std::vec::Vec;
 
@@ -15,8 +15,8 @@ pub struct VTF<'a> {
 }
 
 impl<'a> VTF<'a> {
-    pub fn read(bytes: &mut Vec<u8>) -> Result<VTF, Error> {
-        let mut cursor = Cursor::new(&bytes);
+    pub fn read(bytes: &[u8]) -> Result<VTF, Error> {
+        let mut cursor = Cursor::new(bytes);
 
         let header = VTFHeader::read(&mut cursor)?;
 
