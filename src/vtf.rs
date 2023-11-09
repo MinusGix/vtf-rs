@@ -2,7 +2,7 @@ use crate::header::VTFHeader;
 use crate::image::{ImageFormat, VTFImage};
 use crate::resources::{ResourceList, ResourceType};
 use crate::Error;
-use image::codecs::dxt::{DxtEncoder, DxtVariant};
+
 use image::DynamicImage;
 use std::io::Cursor;
 use std::vec::Vec;
@@ -118,23 +118,25 @@ impl<'a> VTF<'a> {
         match image_format {
             ImageFormat::Dxt5 => {
                 let image_data = image.to_rgba8();
-                let encoder = DxtEncoder::new(&mut data);
-                encoder.encode(
+                let format = texpresso::Format::Bc3;
+                format.compress(
                     &image_data,
-                    header.width as u32,
-                    header.height as u32,
-                    DxtVariant::DXT5,
-                )?;
+                    header.width.into(),
+                    header.height.into(),
+                    texpresso::Params::default(),
+                    &mut data,
+                );
             }
             ImageFormat::Dxt1Onebitalpha => {
                 let image_data = image.to_rgba8();
-                let encoder = DxtEncoder::new(&mut data);
-                encoder.encode(
+                let format = texpresso::Format::Bc1;
+                format.compress(
                     &image_data,
-                    header.width as u32,
-                    header.height as u32,
-                    DxtVariant::DXT1,
-                )?;
+                    header.width.into(),
+                    header.height.into(),
+                    texpresso::Params::default(),
+                    &mut data,
+                );
             }
             ImageFormat::Rgba8888 => {
                 let image_data = image.to_rgba8();

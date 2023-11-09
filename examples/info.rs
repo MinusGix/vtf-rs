@@ -9,9 +9,9 @@ fn main() -> Result<(), Error> {
         panic!("Usage: info <path to vtf file>");
     }
 
-    let mut buf = fs::read(&args[1])?;
+    let buf = fs::read(&args[1])?;
 
-    let vtf = vtf::from_bytes(&mut buf)?;
+    let vtf = vtf::from_bytes(&buf)?;
 
     println!("{:#?}", vtf.header);
     Ok(())

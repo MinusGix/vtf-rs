@@ -54,8 +54,7 @@ pub fn get_mip_size(
 // We could have an in-place version but there's not much benefit since it would need to be
 // converted to a vec anyway, at least with the current code-base
 pub fn bgra_to_rgba(bgra: &[u8]) -> Vec<u8> {
-    let mut dest = Vec::with_capacity(bgra.len());
-    dest.resize(bgra.len(), 0);
+    let mut dest = vec![0; bgra.len()];
     for (src, dst) in bgra.chunks_exact(4).zip(dest.chunks_exact_mut(4)) {
         dst[0] = src[2];
         dst[1] = src[1];
@@ -67,8 +66,7 @@ pub fn bgra_to_rgba(bgra: &[u8]) -> Vec<u8> {
 }
 
 pub fn bgr_to_rgb(bgr: &[u8]) -> Vec<u8> {
-    let mut dest = Vec::with_capacity(bgr.len());
-    dest.resize(bgr.len(), 0);
+    let mut dest = vec![0; bgr.len()];
     for (src, dst) in bgr.chunks_exact(3).zip(dest.chunks_exact_mut(3)) {
         dst[0] = src[2];
         dst[1] = src[1];

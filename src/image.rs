@@ -1,8 +1,8 @@
 use crate::header::VTFHeader;
 use crate::utils::{bgr_to_rgb, bgra_to_rgba, get_offset};
 use crate::Error;
-use image::codecs::dxt::{DxtDecoder, DxtVariant};
-use image::{DynamicImage, ImageBuffer, ImageDecoder, Pixel};
+
+use image::{DynamicImage, ImageBuffer, Pixel};
 use num_enum::TryFromPrimitive;
 use parse_display::Display;
 use std::ops::Deref;
@@ -91,9 +91,11 @@ impl<'a> VTFImage<'a> {
                 let buf = self.decode_dxt(bytes, texpresso::Format::Bc3)?;
                 self.image_from_buffer(buf, DynamicImage::ImageRgba8)
             }
+            #[allow(clippy::unnecessary_to_owned)]
             ImageFormat::Rgba8888 => {
                 self.image_from_buffer(bytes.to_vec(), DynamicImage::ImageRgba8)
             }
+            #[allow(clippy::unnecessary_to_owned)]
             ImageFormat::Rgb888 => self.image_from_buffer(bytes.to_vec(), DynamicImage::ImageRgb8),
             ImageFormat::Bgra8888 => {
                 let bytes = bgra_to_rgba(bytes);
@@ -142,6 +144,7 @@ pub enum ImageFormat {
 }
 
 impl ImageFormat {
+    #[allow(clippy::identity_op)]
     pub fn frame_size(&self, width: u32, height: u32) -> Result<u32, Error> {
         match self {
             ImageFormat::None => Ok(0),
