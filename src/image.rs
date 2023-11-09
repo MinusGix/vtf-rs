@@ -46,11 +46,13 @@ impl<'a> VTFImage<'a> {
         Ok(&self.bytes[base..base + frame_size])
     }
 
-    fn decode_dxt(&self, bytes: &[u8], variant: DxtVariant) -> Result<Vec<u8>, Error> {
-        let decoder = DxtDecoder::new(bytes, self.width as u32, self.height as u32, variant)?;
-        let mut output: Vec<u8> = vec![0; decoder.total_bytes() as usize];
-        decoder.read_image(&mut output)?;
-        Ok(output.to_vec())
+    fn decode_dxt(&self, bytes: &[u8], format: texpresso::Format) -> Result<Vec<u8>, Error> {
+        // TODO(minor): this presumably includes alpha even when there is no alpha, wasting space
+        let mut output = vec![0; self.width as usize * self.height as usize * 4];
+
+        format.decompress(bytes, self.width.into(), self.height.into(), &mut output);
+
+        Ok(output)
     }
 
     fn image_from_buffer<P, Container, F>(
@@ -73,19 +75,20 @@ impl<'a> VTFImage<'a> {
         let bytes = self.get_frame(frame)?;
         match self.format {
             ImageFormat::Dxt1 => {
-                let buf = self.decode_dxt(bytes, DxtVariant::DXT1)?;
-                self.image_from_buffer(buf, DynamicImage::ImageRgb8)
+                let buf = self.decode_dxt(bytes, texpresso::Format::Bc1)?;
+                // TODO: this was previously rgb8, but I think the decode always does it in rgba8?
+                self.image_from_buffer(buf, DynamicImage::ImageRgba8)
             }
             ImageFormat::Dxt1Onebitalpha => {
-                let buf = self.decode_dxt(bytes, DxtVariant::DXT1)?;
+                let buf = self.decode_dxt(bytes, texpresso::Format::Bc1)?;
                 self.image_from_buffer(buf, DynamicImage::ImageRgba8)
             }
             ImageFormat::Dxt3 => {
-                let buf = self.decode_dxt(bytes, DxtVariant::DXT3)?;
+                let buf = self.decode_dxt(bytes, texpresso::Format::Bc2)?;
                 self.image_from_buffer(buf, DynamicImage::ImageRgba8)
             }
             ImageFormat::Dxt5 => {
-                let buf = self.decode_dxt(bytes, DxtVariant::DXT5)?;
+                let buf = self.decode_dxt(bytes, texpresso::Format::Bc3)?;
                 self.image_from_buffer(buf, DynamicImage::ImageRgba8)
             }
             ImageFormat::Rgba8888 => {

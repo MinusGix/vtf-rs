@@ -3,17 +3,19 @@ name = "vtf"
 description = "Valve Texture format library for Rust"
 version = "0.1.6"
 license = "MIT"
-authors = ["Roman Shishkin <spark@uwtech.org>", "Robin Appelman <robin@icewind.nl>"]
+authors = [
+    "Roman Shishkin <spark@uwtech.org>",
+    "Robin Appelman <robin@icewind.nl>",
+]
 repository = "https://github.com/roman901/vtf-rs"
 edition = "2021"
 
-exclude = [
-    "examples/*",
-    "tests/*",
-]
+exclude = ["examples/*", "tests/*"]
 
 [dependencies]
 image = "0.24.5"
+# For dxt images
+texpresso = "2.0.1"
 err-derive = "0.3.1"
 parse-display = "0.7.0"
 num_enum = "0.5.7"
